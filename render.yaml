@@ -1,0 +1,40 @@
+# Blueprint de Render (opcional): permite crear el web service + la base de
+# datos con "New +" -> "Blueprint" apuntando a este repo, en vez de
+# configurar cada campo a mano en el dashboard. Ver DEPLOY.md / README para
+# el paso a paso completo, incluidas las variables que hay que llenar tú
+# mismo (marcadas abajo con sync: false).
+databases:
+  - name: sst-landing-db
+    plan: free
+    databaseName: sst_landing
+    user: sst_landing
+
+services:
+  - type: web
+    name: sst-landing-api
+    runtime: python
+    plan: free
+    buildCommand: bash build.sh
+    startCommand: gunicorn config.wsgi:application
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sst-landing-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "false"
+      - key: PYTHON_VERSION
+        value: "3.12.6"
+      # --- Estos los llenas tú en el dashboard después de crear el servicio ---
+      - key: ALLOWED_HOSTS
+        sync: false # ej: sst-landing-api.onrender.com
+      - key: CSRF_TRUSTED_ORIGINS
+        sync: false # ej: https://sst-landing-api.onrender.com
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false # ej: https://sst-landing-ui.vercel.app
+      - key: EMAIL_BACKEND
+        sync: false # deja el default (console) hasta tener SMTP real
+      - key: NOTIFICACIONES_EMAIL
+        sync: false
