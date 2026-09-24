@@ -122,12 +122,7 @@ STORAGES = {
         if CLOUDINARY_STORAGE["CLOUD_NAME"]
         else {"BACKEND": "django.core.files.storage.FileSystemStorage"}
     ),
-    # Sin la variante "Manifest": esa exige poder resolver por hash cada
-    # archivo referenciado dentro de cada CSS/JS, y varios assets del admin
-    # de Django 5 no calzan ahí (rompe el build por referencias que en la
-    # práctica nunca se usan). Sigue comprimiendo (gzip/brotli) y sirviendo
-    # bien los estáticos, solo sin cache-busting por hash en el nombre.
-    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedStaticFilesStorage"},
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
 }
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
