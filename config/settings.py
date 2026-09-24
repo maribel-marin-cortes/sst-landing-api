@@ -24,7 +24,10 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    # cloudinary_storage debe ir antes de staticfiles (lo pide su doc).
+    "cloudinary_storage",
     "django.contrib.staticfiles",
+    "cloudinary",
     "rest_framework",
     "corsheaders",
     "contenido",
@@ -101,8 +104,24 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
+# Cloudinary para archivos subidos (ImageField): el disco de un web service
+# de Render (plan free) es efímero, se borra en cada deploy/reinicio -- una
+# foto subida por /admin/ desaparecería. Si las credenciales están en el
+# entorno, los ImageField usan Cloudinary (persistente); si no, sigue
+# usando el filesystem local tal cual (docker-compose local no necesita
+# cuenta de Cloudinary para nada).
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": config("CLOUDINARY_CLOUD_NAME", default=""),
+    "API_KEY": config("CLOUDINARY_API_KEY", default=""),
+    "API_SECRET": config("CLOUDINARY_API_SECRET", default=""),
+}
+
 STORAGES = {
-    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "default": (
+        {"BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage"}
+        if CLOUDINARY_STORAGE["CLOUD_NAME"]
+        else {"BACKEND": "django.core.files.storage.FileSystemStorage"}
+    ),
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
 }
 

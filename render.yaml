@@ -46,3 +46,11 @@ services:
         sync: false
       - key: DJANGO_SUPERUSER_PASSWORD
         sync: false
+      # Cloudinary (storage persistente para /admin/, el disco free de
+      # Render es efímero) -- ver README para el paso a paso de la cuenta.
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
