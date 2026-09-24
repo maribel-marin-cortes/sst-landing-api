@@ -38,3 +38,11 @@ services:
         sync: false # deja el default (console) hasta tener SMTP real
       - key: NOTIFICACIONES_EMAIL
         sync: false
+      # Superusuario automático (comando ensure_admin, ver build.sh) --
+      # necesario en el plan free porque no tiene Shell para createsuperuser.
+      - key: DJANGO_SUPERUSER_USERNAME
+        sync: false
+      - key: DJANGO_SUPERUSER_EMAIL
+        sync: false
+      - key: DJANGO_SUPERUSER_PASSWORD
+        sync: false
